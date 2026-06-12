@@ -1,2 +1,2 @@
 # Large-Language-Model-LLM-
-his repository contains my hands-on implementations and notes on Large Language Models (LLMs). As I learn new concepts, I reproduce them from scratch in Python and Google Colab to better understand how modern AI systems work under the hood.
+This repository documents my journey of learning and implementing the core concepts behind Large Language Models (LLMs). Instead of only studying the theory, I recreate each concept from scratch using Python and Google Colab to gain a deeper understanding of how modern AI models work.
