@@ -1,123 +1,170 @@
-# Attention Mechanisms
+# Attention Mechanisms from Scratch
 
-This module implements the fundamental attention mechanisms used in Large Language Models (LLMs) and Transformer architectures. The notebook provides a hands-on, from-scratch implementation of self-attention variants using PyTorch, helping build intuition for how modern language models process and contextualize information.
+This notebook implements the core attention mechanisms used in Transformer-based Large Language Models (LLMs) from first principles using PyTorch. Instead of relying on prebuilt attention modules, the notebook progressively builds attention from manual Query-Key-Value computations to complete reusable PyTorch modules.
 
-## Overview
+The goal of this project is to understand how modern Transformer architectures process contextual information through attention.
 
-Attention is the core building block of Transformer-based models such as GPT, BERT, LLaMA, and other modern LLMs. It enables tokens in a sequence to selectively focus on relevant information from other tokens, allowing the model to capture contextual relationships effectively.
+---
 
-This notebook covers:
+## What This Notebook Covers
 
-* Self-Attention with Trainable Weights
-* Causal (Masked) Self-Attention
-* Multi-Head Attention
+### 1. Self-Attention Fundamentals
 
-## Contents
+The notebook begins with a manual implementation of self-attention by computing:
 
-### Self-Attention with Trainable Weights
+* Query vectors (Q)
+* Key vectors (K)
+* Value vectors (V)
 
-Implementation of the standard self-attention mechanism where learnable weight matrices generate:
+using trainable weight matrices.
 
-* Queries (Q)
-* Keys (K)
-* Values (V)
-
-The attention output is computed using scaled dot-product attention:
-
-```math
-Attention(Q,K,V)=Softmax\left(\frac{QK^T}{\sqrt{d_k}}\right)V
-```
+Starting from token embeddings, attention scores are computed through dot products between queries and keys, followed by normalization using Softmax to generate attention weights.
 
 Key concepts explored:
 
-* Query-Key similarity
+* Query, Key, and Value projections
 * Attention score computation
-* Softmax normalization
+* Attention weight normalization
 * Context vector generation
-* Learnable projection matrices
+* Scaled dot-product attention
 
 ---
 
-### Causal Self-Attention
+### 2. Self-Attention Implementations
 
-Causal attention ensures that each token can only attend to itself and preceding tokens.
+Two versions of self-attention are implemented:
 
-This masking strategy is essential for autoregressive language models such as GPT because it prevents information leakage from future tokens during training.
+#### SelfAttention_v1
 
-Concepts covered:
+A low-level implementation using manually defined trainable weight parameters.
 
-* Attention masking
-* Lower-triangular causal masks
+This version focuses on understanding the mathematics behind attention and how trainable projection matrices transform embeddings into queries, keys, and values.
+
+#### SelfAttention_v2
+
+A cleaner implementation using PyTorch's:
+
+```python
+nn.Linear
+```
+
+layers for Query, Key, and Value projections.
+
+This version demonstrates how self-attention is typically implemented in modern deep learning codebases.
+
+---
+
+### 3. Causal (Masked) Self-Attention
+
+The notebook extends standard self-attention by introducing causal masking.
+
+A lower-triangular mask is applied so that each token can only attend to itself and previous tokens, preventing information leakage from future positions.
+
+This mechanism is fundamental to autoregressive language models such as GPT.
+
+Topics covered:
+
+* Causal masking
+* Lower-triangular attention masks
 * Masked attention scores
-* Dropout integration
+* Softmax after masking
+* Attention dropout
 
 ---
 
-### Multi-Head Attention
+### 4. Multi-Head Attention
 
-Multi-head attention extends self-attention by allowing the model to learn multiple contextual representations simultaneously.
+The notebook implements Multi-Head Attention in two different ways.
 
-Benefits include:
+#### MultiHeadAttentionWrapper
 
-* Capturing different semantic relationships
-* Learning multiple attention patterns
-* Improved representation learning
-* Enhanced model capacity
+Creates multiple independent attention heads using:
 
-Implementation includes:
+```python
+nn.ModuleList
+```
 
-* Multiple attention heads
-* Parallel attention computation
-* Head concatenation
-* Output projection layers
+where each head performs causal attention separately before concatenation.
+
+This implementation helps visualize how multiple attention heads operate in parallel.
+
+#### MultiHeadAttention
+
+A more efficient Transformer-style implementation that:
+
+* Projects inputs into Queries, Keys, and Values
+* Splits embeddings into multiple heads
+* Computes attention in parallel
+* Concatenates head outputs
+* Applies a final output projection
+
+This closely mirrors the architecture used in modern Transformer models.
 
 ---
 
-## Learning Goals
+## Learning Progression
 
-After completing this notebook, you should understand:
+The notebook follows the following sequence:
 
-* How self-attention works internally
-* Why attention scores are scaled
-* The purpose of causal masking
-* How multi-head attention improves Transformer performance
-* The attention mechanism used inside modern LLMs
+```text
+Token Embeddings
+       ↓
+Manual Query, Key, Value Computation
+       ↓
+Attention Scores
+       ↓
+Attention Weights
+       ↓
+Context Vectors
+       ↓
+SelfAttention_v1
+       ↓
+SelfAttention_v2
+       ↓
+Causal Self-Attention
+       ↓
+MultiHeadAttentionWrapper
+       ↓
+Transformer-Style MultiHeadAttention
+```
 
-## Technologies
+This progression is designed to build intuition before moving toward production-style implementations.
+
+---
+
+## Technologies Used
 
 * Python
 * PyTorch
 * Jupyter Notebook
 
-## File
+---
 
-```text
-SELF_ATTENTION_WITH_TRAINABLE_WEIGHTS_,_Casual_Self_Attention_,_Multi_Head_Attention.ipynb
-```
+## Concepts Demonstrated
+
+* Trainable attention weights
+* Query-Key-Value transformations
+* Scaled dot-product attention
+* Softmax normalization
+* Context vector computation
+* Attention masking
+* Causal self-attention
+* Multi-head attention
+* Dropout regularization
+* PyTorch module design
+
+---
+
+## Why This Project?
+
+Most tutorials introduce attention through high-level APIs. This notebook focuses on understanding the underlying mechanics by implementing each component step-by-step.
+
+By the end of the notebook, the reader can understand how Transformer attention layers operate internally and how self-attention evolves into the multi-head attention mechanism used in modern LLMs.
+
+---
 
 ## References
 
 * Attention Is All You Need (Vaswani et al., 2017)
 * PyTorch Documentation
-* Transformer Architecture
-
-## Position in the LLM Pipeline
-
-```text
-Input Tokens
-      ↓
-Token Embeddings
-      ↓
-Self-Attention
-      ↓
-Multi-Head Attention
-      ↓
-Feed Forward Network
-      ↓
-Transformer Blocks
-      ↓
-Large Language Model Output
-```
-
-This notebook focuses specifically on the attention layer, which serves as the foundation of modern Transformer-based language models.
-
+* Transformer Architecture Fundamentals
