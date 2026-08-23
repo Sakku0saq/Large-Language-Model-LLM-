@@ -37,7 +37,7 @@ def load_sms_spam_data(seed=123):
     """Loads and balances the SMS Spam Collection dataset from the HF Hub."""
     from datasets import load_dataset
 
-    ds = load_dataset("sms_spam", trust_remote_code=True)["train"]
+    ds = load_dataset("ucirvine/sms_spam")["train"]
     texts = [ex["sms"].strip() for ex in ds]
     labels = [ex["label"] for ex in ds]  # 0 = ham, 1 = spam
 
